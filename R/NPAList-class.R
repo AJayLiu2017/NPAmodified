@@ -99,15 +99,22 @@ NPAList$lock()
 compute_npa_list <- function(comparisons, models,
                          verbose=FALSE) {
   npas <- list()
+  npa_1model <- list()
   for (model in models) {
     if (verbose) {
       message(paste0("Computing NPA for: ",
                      model$get_family(), ' - ', model$get_name()))
     }
     name <- paste0(model$get_family(), ' / ', model$get_name())
-    npas[[name]] <- compute_npa(comparisons, model)$get_data()
+    #npas[[name]] <- compute_npa(comparisons, model)$get_data()
+    npa_temp<-compute_npa(comparisons, model)
+    npa_1model<-append(npa_1model,npa_temp)
+    npas[[name]]<-npa_temp$get_data()
   }
-  return(NPAList$new(npas, model$get_species()))
+  ori <- NPAList$new(npas, model$get_species())
+  outlist <- list(ori,npa_1model)
+  names(outlist) <- c("npalist","npa_1model")
+  return(outlist)
 }
 
 #==============================================================================
